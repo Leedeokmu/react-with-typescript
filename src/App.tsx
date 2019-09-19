@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Component} from 'react';
 
-const App: React.FC = () => {
+interface AppProps {
+  name: string
+}
+interface AppState {
+  age: number
+}
+
+class App extends Component<AppProps, AppState>{
+  constructor(props: AppProps){
+    super(props);
+    this.state = {
+      age: 22
+    };
+    setInterval(() => {
+      this.setState({
+        age: this.state.age + 1
+      })
+    }, 2000)
+  }
+
+  render() {
+    return (
+        <div>
+          {this.props.name} Hi!
+          I'm {this.state.age}
+          <StatelessComponent name="Anna">Hi!</StatelessComponent>
+        </div>
+    );
+  }
+}
+
+const StatelessComponent: React.FC<AppProps> = (props) => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+      <h2>{props.name} {props.children}</h2>
+  )
 }
 
 export default App;
