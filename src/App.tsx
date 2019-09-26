@@ -1,66 +1,38 @@
 import React, {Component} from 'react';
+import {BrowserRouter, Route, Link, RouteComponentProps} from "react-router-dom";
 
-interface AppProps {
-  name: string;
-  company?: string;
-}
-interface AppState {
-  age: number
-}
-
-class App extends Component<AppProps, AppState>{
-  static defaultProps = {
-    company: 'bluehole'
-  }
-  constructor(props: AppProps){
-    super(props);
-    this.state = {
-      age: 22
-    };
-  }
-  componentDidMount(): void {
-    console.log(`App componentDidMount`);
-    setInterval(() => {
-      this.setState({
-        age: this.state.age + 1
-      })
-    }, 2000)
-  }
-
-  private _rollback = (): void => {
-    this.setState({
-      age: 20
-    })
-  }
-
-
-  render() {
-    const name = {
-      name: 'Anna'
-
+const Post = (props: RouteComponentProps<{postId: string}>) => {
+    const goNextPost = () => {
+        const nextPostId = +props.match.params.postId + 1;
+        props.history.push(`/posts/${nextPostId}`);
     }
-
     return (
-        <div>
-          <p>
-            {this.props.name} Hi!
-            I'm {this.state.age} In {this.props.company}
-          </p>
-          <div><button onClick={this._rollback}>회춘</button></div>
+        <>
+            <h3>Post {props.match.params.postId}</h3>
+            <button onClick={goNextPost}>Go Next</button>
+            <p>{new URLSearchParams(props.location.search).get('body')}</p>
+        </>
+    )
+}
 
-          <StatelessComponent {...name}>Hi! I'm child</StatelessComponent>
-        </div>
+class App extends Component<{}, {}>{
+  render() {
+    return (
+        <BrowserRouter>
+          <>
+              <nav>
+                  <ul>
+                      <li><Link to="/">Home</Link></li>
+                      <li><Link to="/intro">Intro</Link></li>
+                  </ul>
+              </nav>
+            <Route exact={true} path="/" render={() => <h3>Home</h3>}/>
+            <Route path="/intro" render={() => <h3>intro</h3>}/>
+            <Route path="/posts/:postId" component={Post}/>
+          </>
+        </BrowserRouter>
     );
   }
-}
-
-const StatelessComponent: React.FC<AppProps> = ({...props}) => {
-  return (
-      <h2>{props.name} {props.company} {props.children}</h2>
-  )
-}
-StatelessComponent.defaultProps = {
-  company: 'Home'
 }
 
 export default App;
